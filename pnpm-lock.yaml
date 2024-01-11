@@ -5,14 +5,11 @@ dependencies:
     specifier: ^3.8.9
     version: 3.8.9(graphql@16.8.1)
   '@vue/apollo-composable':
-    specifier: 4.0.0-beta.12
+    specifier: ^4.0.0-beta.12
     version: 4.0.0-beta.12(@apollo/client@3.8.9)(graphql@16.8.1)(typescript@5.2.2)(vue@3.3.4)
   axios:
     specifier: ^1.5.0
     version: 1.5.0
-  countries-list:
-    specifier: ^3.0.6
-    version: 3.0.6
   graphql:
     specifier: ^16.8.1
     version: 16.8.1
@@ -1189,10 +1186,6 @@ packages:
   /confusing-browser-globals@1.0.11:
     resolution: {integrity: sha512-JsPKdmh8ZkmnHxDk55FZ1TqVLvEQTvoByJZRN9jzI0UjxK/QgAmsphz7PGtqgPieQZ/CQcHWXCR7ATDNhGe+YA==}
     dev: true
-
-  /countries-list@3.0.6:
-    resolution: {integrity: sha512-BCJODHTSRMIxS0W80NZw8bC7x6/WS8Tf4FdtFrEbW0FONBbqTAzOrKNG06UEMgLGxOZpOJddiVEdCztKLpmPxA==}
-    dev: false
 
   /cross-spawn@7.0.3:
     resolution: {integrity: sha512-iRDPJKUPVEND7dHPO8rkbOnPpyDygcDFtWjpeWNCgy8WP2rXcxXL8TskReQl6OrB2G7+UJrags1q15Fudc7G6w==}
