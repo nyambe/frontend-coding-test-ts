@@ -1,38 +1,70 @@
-import { ref } from 'vue';
-import { useQuery, useMutation, gql } from '@apollo/client';
-import { TContinents, TCountries, continents, ICountryData } from 'countries-list'
+import { continents } from 'countries-list';
+import { ref, computed } from 'vue';
+import { ApolloClient, createHttpLink, InMemoryCache, gql, ApolloError } from '@apollo/client/core'
+import { provideApolloClient, useQuery } from "@vue/apollo-composable";
 
+export interface Continent {
+	code: string;
+	name: string;
+}
 
-const continentsList = ref<TContinents>()
+export interface GetContinentsQueryResult {
+	continents: Continent[];
+}
+
+// HTTP connection to the API
+const httpLink = createHttpLink({
+	// You should use an absolute URL here
+	uri: 'https://countries.trevorblades.com',
+})
+
+// Cache implementation
+const cache = new InMemoryCache()
+
+// Create the apollo client
+const apolloClient = new ApolloClient({
+	link: httpLink,
+	cache,
+})
+
 const GET_CONTINENTS = gql`
-  query GetContinents {
-    continents {
-      code
-      name
-    }
-  }
+	query GetContinents {
+		continents {
+			code
+			name
+		}
+	}
 `;
 
-export function useContinents() {
-	const continents = ref([]);
-	const loading = ref(false);
-	const error = ref(null);
-
-	const resultado = useQuery(GET_CONTINENTS);
-
-	console.log('resultado', resultado)
+const continents = ref<GetContinentsQueryResult>()
+const loadingStatus = ref(false)
+const errorMessage = ref<ApolloError | null>()
 
 
+function getContinents() {
+	const query = provideApolloClient(apolloClient)(() => useQuery<GetContinentsQueryResult>(GET_CONTINENTS))
+	const { result, loading, error } = query
+	const continents = result.value?.continents
 	return {
+		result,
 		continents,
 		loading,
-		error,
-	};
+		error
+	}
 }
+
+
+console.log(continents)
 
 export function useCountries() {
 	return {
-		continentsList,
-		useContinents
+		continents,
+		loadingStatus,
+		errorMessage,
+		getContinents
 	}
 }
+
+export default continents
+
+
