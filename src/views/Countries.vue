@@ -37,33 +37,60 @@
 						{{ item }}	
 					</button>
 				</div>
-				<button v-if="currentCountry" v-on:click="softReset" class="mt-10 text-xs md:mt-20">
+				<button v-if="currentCountry && !showToast && !loadingCurrencyInfo" v-on:click="softReset" class="mt-10 text-xs md:mt-20">
 				try another country
 				</button>
+				<div v-if="loadingCurrencyInfo" class="mt-10 text-xs font-bold text-slate-700 md:mt-20 animate-ping"> ... </div>
 			</div>
 		</div>
-		<pre>
-		{{ countriesCurrencyInfo }}
-		</pre>
+
 	</div>
 </template>
 
 <script setup lang="ts">
+import { onMounted } from 'vue';
 import { useCountries } from '../composables/useCountries';
+import useToast from '../composables/useToast';
 
-const { getContinents, showContinentName, getCountries, countriesList, currentCountry, currencyMap, softReset, getCurrencyInfo, countriesCurrencyInfo } = useCountries();
+const { toastMessage, showToastMessage, toastTitle, toastType, showToast } = useToast();
+
+const { getContinents, showContinentName, getCountries, countriesList, currentCountry, currencyMap, softReset, getCurrencyInfo, currentCurrencyName, currentCurrencyCountries, loadingCurrencyInfo } = useCountries();
 
 const {result, error, loading, continents, currentContinent, checkAnswerContinent }	=  getContinents()
 
+onMounted(() => {
+	console.log('onMounted')
+	getContinents()
+})
+
+
+
 async function check(selectedCurrency: string) {
+	await getCurrencyInfo(selectedCurrency)
+
+	let answer =  'FALSE! '
+	console.log('selectedCurrency', currentCurrencyCountries.value)
+
 	if (selectedCurrency === currentCountry.value?.currency) {
-		// Correct guess
-		alert('Correct!');
+		// alert('Correct!');
+		answer = 'CORRECT! '
+		toastType.value = 'success'
+		
+
+		setTimeout(() => {
+			showToast.value = false
+			softReset()
+		}, 3000);
+
 	} else {
-		// Incorrect guess
-		getCurrencyInfo(selectedCurrency)
-		alert('Incorrect. Try again.');
+		toastType.value = 'error'
+		// alert('Incorrect. Try again.');
 	}
+
+	toastTitle.value = `${answer} ${selectedCurrency}: ${currentCurrencyName.value}`;
+	toastMessage.value = `Used in: ${currentCurrencyCountries.value}`;
+
+	showToastMessage()
 }
 
 

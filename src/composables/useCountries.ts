@@ -94,7 +94,7 @@ const loadingStatus = ref(false)
 const errorMessage = ref<ApolloError | null>()
 
 
-// Random Continent
+// currency per continent
 
 const currentContinent = ref<Continent>();
 const showContinentName = ref(true);
@@ -103,7 +103,13 @@ const currentNumber = ref(0);
 const countriesList = ref<Country[]>();
 const currentCountry = ref<Country>();
 const currencyMap = ref<string[]>();
+
+// currency info
 const countriesCurrencyInfo = ref<CountryInfo[]>();
+const currentCurrencyName = ref<string>();
+const currentCurrencyCountries = ref<string>();
+const loadingCurrencyInfo = ref(false);
+
 
 
 function setRandomNumber(length: number) {
@@ -124,7 +130,7 @@ function getCountries(code: string) {
 		code
 	});
 
-	const countries = computed(() => result.value?.countries || []);
+	const countries = computed<Country[]>(() => result.value?.countries || []);
 
 	watch(countries, (newCountries) => {
 		countriesList.value = newCountries;
@@ -210,17 +216,29 @@ function softReset() {
 async function getCurrencyInfo(currency: string) {
 	// fetch from https://restcountries.com/v3.1/currency/{currency}
 	countriesCurrencyInfo.value = [];
+	currentCurrencyName.value = currency;
+	currentCurrencyCountries.value = ''
+	loadingCurrencyInfo.value = true;
 
 	try {
 		const response = await fetch(`https://restcountries.com/v3.1/currency/${currency}`)
 		const info = await response.json();
 		countriesCurrencyInfo.value = info as CountryInfo[];
+		if (countriesCurrencyInfo.value && countriesCurrencyInfo.value.length > 0) {
+			currentCurrencyName.value = countriesCurrencyInfo.value[0].currencies[currency].name;
+			currentCurrencyCountries.value = countriesCurrencyInfo.value.map(country => country.name.common).join(', ');
+		}
+
 		console.log('response', info)
 	} catch (error) {
+		currentCurrencyCountries.value = 'currency info not available'
 		console.log('error', error)
 	}
+	loadingCurrencyInfo.value = false;
 
 }
+
+
 
 
 export function useCountries() {
@@ -235,6 +253,9 @@ export function useCountries() {
 		countriesList,
 		currencyMap,
 		countriesCurrencyInfo,
+		currentCurrencyCountries,
+		currentCurrencyName,
+		loadingCurrencyInfo,
 		getContinents,
 		setShowContentinent,
 		setRandomNumber,
