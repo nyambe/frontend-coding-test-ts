@@ -1,4 +1,4 @@
-import { ref, computed, onMounted } from 'vue';
+import { ref, computed, watch } from 'vue';
 import { provideApolloClient, useQuery } from "@vue/apollo-composable";
 import { ApolloClient, createHttpLink, InMemoryCache, gql, ApolloError } from '@apollo/client/core'
 
@@ -24,6 +24,32 @@ export interface Country {
 	emoji: string;
 	languages: Language[];
 }
+
+interface CountryName {
+	common: string;
+	official: string;
+}
+
+interface MapsInfo {
+	googleMaps: string;
+	openStreetMaps: string;
+}
+
+interface CurrencyInfo {
+	name: string;
+	symbol: string;
+}
+
+interface CurrenciesInfo {
+	[key: string]: CurrencyInfo;
+}
+
+interface CountryInfo {
+	name: CountryName;
+	maps: MapsInfo;
+	currencies: CurrenciesInfo;
+}
+
 
 const httpLink = createHttpLink({
 	uri: 'https://countries.trevorblades.com',
@@ -71,9 +97,14 @@ const errorMessage = ref<ApolloError | null>()
 // Random Continent
 
 const currentContinent = ref<Continent>();
-const showContinentName = ref(false);
+const showContinentName = ref(true);
 const showTimeout = ref(500);
 const currentNumber = ref(0);
+const countriesList = ref<Country[]>();
+const currentCountry = ref<Country>();
+const currencyMap = ref<string[]>();
+const countriesCurrencyInfo = ref<CountryInfo[]>();
+
 
 function setRandomNumber(length: number) {
 	return Math.floor(Math.random() * length);
@@ -89,38 +120,31 @@ function setShowContentinent() {
 
 function getCountries(code: string) {
 
-
-
 	const { result, loading, error } = useQuery(GET_COUNTRIES_BY_CONTINENT, {
-		code: code || currentContinent.value?.code,
+		code
 	});
 
 	const countries = computed(() => result.value?.countries || []);
-	const currentCountry = computed(() => {
-		if (continents.value) {
-			console.log('continents', countries.value)
-			const randomIndex = Math.floor(Math.random() * countries.value.length);
-			return countries.value[randomIndex];
-		}
-		return undefined;
-	})
-	const currencyMap = computed(() => {
-		const map = new Map();
 
-		countries.value.forEach(country => {
-			country.currencies.forEach(currency => {
-				if (!map.has(currency)) {
-					map.set(currency, []);
-				}
-				map.get(currency).push(country.name);
+	watch(countries, (newCountries) => {
+		countriesList.value = newCountries;
+		if (newCountries.length > 0) {
+			const randomIndex = Math.floor(Math.random() * newCountries.length);
+			currentCountry.value = newCountries[randomIndex];
+			const map = new Map();
+			newCountries.forEach(country => {
+				country.currencies.forEach(currency => {
+					if (!map.has(currency)) {
+						map.set(currency, []);
+					}
+					map.get(currency).push(country.name);
+				});
 			});
-		});
-
-		return map;
+			currencyMap.value = Array.from(map.keys());
+		}
 	});
 
 	return { countries, loading, error, currencyMap, currentCountry };
-
 
 }
 
@@ -134,7 +158,6 @@ function getContinents() {
 	const currentContinent = computed(() => {
 		if (continents.value) {
 			console.log('continents', continents.value)
-			setShowContentinent()
 			const randomIndex = Math.floor(Math.random() * continents.value.length);
 			return continents.value[randomIndex];
 		}
@@ -171,17 +194,53 @@ function getContinents() {
 	}
 }
 
+function softReset() {
+	if (countriesList.value && currentCountry.value) {
+		if (countriesList.value.indexOf(currentCountry.value) === countriesList.value.length - 1) {
+			const [first] = countriesList.value;
+			currentCountry.value = first;
+		} else {
+			currentCountry.value = countriesList.value[countriesList.value.indexOf(currentCountry.value) + 1];
+		}
+
+		console.log('softReset', countriesList.value.indexOf(currentCountry.value), countriesList.value.length)
+	}
+}
+
+async function getCurrencyInfo(currency: string) {
+	// fetch from https://restcountries.com/v3.1/currency/{currency}
+	countriesCurrencyInfo.value = [];
+
+	try {
+		const response = await fetch(`https://restcountries.com/v3.1/currency/${currency}`)
+		const info = await response.json();
+		countriesCurrencyInfo.value = info as CountryInfo[];
+		console.log('response', info)
+	} catch (error) {
+		console.log('error', error)
+	}
+
+}
+
+
 export function useCountries() {
+
 	return {
 		continents,
 		loadingStatus,
 		errorMessage,
 		currentContinent,
 		showContinentName,
+		currentCountry,
+		countriesList,
+		currencyMap,
+		countriesCurrencyInfo,
 		getContinents,
 		setShowContentinent,
 		setRandomNumber,
 		getCountries,
+		softReset,
+		getCurrencyInfo
 
 	}
 }
