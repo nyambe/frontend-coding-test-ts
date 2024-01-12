@@ -8,6 +8,5 @@
 </template>
 
 <script setup lang="ts">
-import GlobalToast from './components/layout/GlobalToast.vue';
-
+import GlobalToast from './components/layout/GlobalToast.vue'
 </script>
