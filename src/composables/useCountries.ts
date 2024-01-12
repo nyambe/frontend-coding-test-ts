@@ -163,15 +163,13 @@ function getContinents() {
 
 	const currentContinent = computed(() => {
 		if (continents.value) {
-			console.log('continents', continents.value)
 			const randomIndex = Math.floor(Math.random() * continents.value.length);
 			return continents.value[randomIndex];
 		}
 		return undefined;
 	})
 
-	function checkAnswerContinent(code) {
-		console.log('code', code, currentContinent.value)
+	function checkAnswerContinent(code: string) {
 		if (!currentContinent.value || !continents.value || !result.value) {
 			return
 		}
@@ -180,16 +178,11 @@ function getContinents() {
 			alert('Correct!');
 			const res = getCountries(code);
 
-			console.log('res', res?.countries.value)
-
-			// result.value?.continents?.splice(continents.value.indexOf(currentContinent.value), 1);
 		} else {
 			alert('Wrong! Try again.');
 		}
-		// selectRandomContinent(); // Select a new continent for the next round
 	}
 
-	console.log('dontine', currentContinent.value)
 	return {
 		result,
 		loading,
@@ -209,12 +202,10 @@ function softReset() {
 			currentCountry.value = countriesList.value[countriesList.value.indexOf(currentCountry.value) + 1];
 		}
 
-		console.log('softReset', countriesList.value.indexOf(currentCountry.value), countriesList.value.length)
 	}
 }
 
 async function getCurrencyInfo(currency: string) {
-	// fetch from https://restcountries.com/v3.1/currency/{currency}
 	countriesCurrencyInfo.value = [];
 	currentCurrencyName.value = currency;
 	currentCurrencyCountries.value = ''
@@ -229,7 +220,6 @@ async function getCurrencyInfo(currency: string) {
 			currentCurrencyCountries.value = countriesCurrencyInfo.value.map(country => country.name.common).join(', ');
 		}
 
-		console.log('response', info)
 	} catch (error) {
 		currentCurrencyCountries.value = 'currency info not available'
 		console.log('error', error)

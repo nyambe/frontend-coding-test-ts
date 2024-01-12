@@ -24,7 +24,7 @@ function showToastMessage() {
 	showToast.value = true;
 	setTimeout(() => {
 		showToast.value = false;
-	}, 6000);
+	}, 5000);
 }
 
 

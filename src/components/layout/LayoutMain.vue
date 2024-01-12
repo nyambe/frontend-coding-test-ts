@@ -18,10 +18,10 @@
                 >Home</router-link
               >
               <router-link
-                to="/countries"
+                to="/currency-quest"
                 class="px-3 py-2 text-sm font-medium text-gray-300 rounded-md hover:bg-gray-700 hover:text-white"
                 exact-active-class="text-white bg-gray-900"
-                >Countries</router-link
+                >Currency Quest</router-link
               >
             </div>
           </div>

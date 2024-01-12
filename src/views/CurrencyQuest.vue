@@ -30,17 +30,17 @@
 
 
 				<div class="w-full pb-5 text-xl font-black text-center md:text-5xl" v-if="currentCountry">
-					{{ currentCountry.name  }}({{ currentContinent.name  }}) {{ currentCountry.currency }}
+					{{ currentCountry.name  }} {{ currentCountry.currency }}
 				</div>
-				<div v-if="currencyMap && currencyMap.length" class="grid w-full max-w-6xl grid-cols-5 gap-2 mx-auto md:grid-cols-8">
-					<button v-on:click="check(item)" class="p-2 font-bold text-center uppercase md:text-2xl hover:bg-gray-200" v-for="item in currencyMap" v-bind:key="item">
+				<div v-if="currencyMap && currencyMap.length" class="grid w-full max-w-6xl grid-cols-6 gap-2 mx-auto md:grid-cols-8">
+					<button v-on:click="check(item)" class="p-1 text-xl font-bold text-center uppercase md:p-2 md:text-3xl hover:bg-gray-200" v-for="item in currencyMap" v-bind:key="item">
 						{{ item }}	
 					</button>
 				</div>
 				<button v-if="currentCountry && !showToast && !loadingCurrencyInfo" v-on:click="softReset" class="mt-10 text-xs md:mt-20">
 				try another country
 				</button>
-				<div v-if="loadingCurrencyInfo" class="mt-10 text-xs font-bold text-slate-700 md:mt-20 animate-ping"> ... </div>
+				<div v-if="loadingCurrencyInfo" class="w-64 mx-auto mt-10 text-xs font-bold text-slate-700 md:mt-20 animate-ping"> ... </div>
 			</div>
 		</div>
 
@@ -48,31 +48,19 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted } from 'vue';
 import { useCountries } from '../composables/useCountries';
 import useToast from '../composables/useToast';
 
 const { toastMessage, showToastMessage, toastTitle, toastType, showToast } = useToast();
-
-const { getContinents, showContinentName, getCountries, countriesList, currentCountry, currencyMap, softReset, getCurrencyInfo, currentCurrencyName, currentCurrencyCountries, loadingCurrencyInfo } = useCountries();
-
-const {result, error, loading, continents, currentContinent, checkAnswerContinent }	=  getContinents()
-
-onMounted(() => {
-	console.log('onMounted')
-	getContinents()
-})
-
-
+const { getContinents, showContinentName, getCountries,  currentCountry, currencyMap, softReset, getCurrencyInfo, currentCurrencyName, currentCurrencyCountries, loadingCurrencyInfo } = useCountries();
+const { loading,  currentContinent  }	=  getContinents()
 
 async function check(selectedCurrency: string) {
 	await getCurrencyInfo(selectedCurrency)
 
 	let answer =  'FALSE! '
-	console.log('selectedCurrency', currentCurrencyCountries.value)
 
 	if (selectedCurrency === currentCountry.value?.currency) {
-		// alert('Correct!');
 		answer = 'CORRECT! '
 		toastType.value = 'success'
 		
@@ -80,11 +68,10 @@ async function check(selectedCurrency: string) {
 		setTimeout(() => {
 			showToast.value = false
 			softReset()
-		}, 3000);
+		}, 9000);
 
 	} else {
 		toastType.value = 'error'
-		// alert('Incorrect. Try again.');
 	}
 
 	toastTitle.value = `${answer} ${selectedCurrency}: ${currentCurrencyName.value}`;

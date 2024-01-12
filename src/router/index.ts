@@ -8,7 +8,7 @@ import {
 import LayoutMain from '../components/layout/LayoutMain.vue'
 import Error from '../views/Error.vue'
 import Home from '../views/Home.vue'
-import Countries from '../views/Countries.vue'
+import Quest from '../views/CurrencyQuest.vue'
 
 const mainRoutes: RouteRecordRaw[] = [
   {
@@ -18,10 +18,10 @@ const mainRoutes: RouteRecordRaw[] = [
     component: Home,
   },
   {
-    path: '/countries',
-    name: 'Countries',
+    path: '/currency-quest',
+    name: 'Quest',
     props: true,
-    component: Countries,
+    component: Quest,
   },
 ]
 
