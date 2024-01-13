@@ -4,7 +4,7 @@ type ToastType = 'success' | 'error' | 'warning' | 'info'
 type ToastStylesType = Record<ToastType, string>
 
 const showToast = ref(false)
-const toastTimeout = ref(7000)
+const toastTimeout = ref(5000)
 const toastMessage = ref('')
 const toastTitle = ref('')
 const toastType = ref<ToastType>()
@@ -16,7 +16,7 @@ const toastStyles: ToastStylesType = {
 }
 const toastClass = computed(() => {
 	return [
-		'px-4 py-3 border-t-4  rounded-b shadow-md',
+		'px-4 py-3 border-t-4 rounded-b shadow-md',
 		toastType.value ? toastStyles[toastType.value] : '',
 	]
 })

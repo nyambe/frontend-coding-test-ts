@@ -155,7 +155,7 @@ function getCountries(code: string) {
 }
 
 function getContinents() {
-	const { result, loading, error } =
+	const { result, loading, error, refetch } =
 		useQuery<GetContinentsQueryResult>(GET_CONTINENTS)
 
 	const continents = computed(() => result.value?.continents)
@@ -169,7 +169,7 @@ function getContinents() {
 	})
 
 	return {
-		result,
+		refetch,
 		loading,
 		error,
 		continents,

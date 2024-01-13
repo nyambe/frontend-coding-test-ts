@@ -77,13 +77,6 @@
             {{ item }}
           </button>
         </div>
-        <button
-          v-if="currentCountry && !showToast && !loadingCurrencyInfo"
-          class="mt-10 text-xs md:mt-20"
-          v-on:click="softReset"
-        >
-          try another country
-        </button>
         <div
           v-if="loadingCurrencyInfo"
           class="w-64 mx-auto mt-10 text-xs font-bold text-slate-700 md:mt-20 animate-ping"
@@ -96,8 +89,11 @@
 </template>
 
 <script setup lang="ts">
+import { watch } from 'vue';
+import { useRoute } from 'vue-router';
 import { useCountries } from '../composables/useCountries'
 import useToast from '../composables/useToast'
+
 
 const { toastMessage, showToastMessage, toastTitle, toastType, showToast, toastTimeout } =
   useToast()
@@ -115,7 +111,7 @@ const {
 	tries,
 	maxTries
 } = useCountries()
-const { loading, currentContinent } = getContinents()
+const { loading, currentContinent, refetch } = getContinents()
 
 function help() {
 	toastTitle.value = 'Help'
@@ -135,6 +131,7 @@ async function check(selectedCurrency: string) {
   if (isCorrectCurrency) {
     answer = 'TRUE! '
     toastType.value = 'success'
+    toastMessage.value = `Used in: ${currentCurrencyCountries.value}.`
 	
     setTimeout(() => {
       showToast.value = false
@@ -145,6 +142,7 @@ async function check(selectedCurrency: string) {
 		
 	} else {	
 		toastType.value = 'error'
+    toastMessage.value = `Used in: ${currentCurrencyCountries.value}.  ${tries.value} of ${maxTries.value} tries.`
 	}
 
 	
@@ -152,25 +150,24 @@ async function check(selectedCurrency: string) {
 		toastType.value = 'warning'
 		answer = `FALSE! ${currentCountry.value?.name}`
 		toastTitle.value = `${answer} ${currentCountry.value?.emoji}: ${currentCountry.value?.currency}`
-		toastMessage.value = `TOO MANY TRIES!.  ${tries.value} of ${maxTries.value} tries.`
+		toastMessage.value = `TOO MANY TRIES!.`
 
 		showToastMessage(toastTimeout.value+1000)
 		setTimeout(() => {
 			tries.value = 0
 			maxTries.value = maxTries.value < 5 ? maxTries.value + 1 : maxTries.value
+      toastTimeout.value = 3000
 			softReset()
 		}, toastMessage.value.length)
 		
 	} else {
 		toastTitle.value = `${answer} ${selectedCurrency}: ${currentCurrencyName.value}`
-  	toastMessage.value = `Used in: ${currentCurrencyCountries.value}.  ${tries.value} of ${maxTries.value} tries.`
+  	
 		showToastMessage(toastTimeout.value)
-	}
-
-
-
-  
+	}  
 }
+
+
 </script>
 
 <style scoped></style>
