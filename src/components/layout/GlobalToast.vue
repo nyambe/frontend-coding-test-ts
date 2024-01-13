@@ -1,7 +1,7 @@
 <template>
   <transition name="fade">
-    <div v-if="showToast" class="absolute w-full top-20">
-      <div class="max-w-xl mx-auto" v-on:click="showToast = false">
+    <div v-if="showToast" class="absolute w-full bottom-20">
+      <div class="max-w-xl mx-auto cursor-pointer" v-on:click="showToast = false">
         <div v-bind:class="toastClass" role="alert">
           <div class="flex text-left">
             <div class="py-1">
@@ -17,7 +17,7 @@
             </div>
             <div>
               <p class="font-bold">{{ toastTitle }}</p>
-              <p class="text-sm">{{ toastMessage }}</p>
+              <p class="pb-4 text-sm">{{ toastMessage }}</p>
             </div>
           </div>
         </div>

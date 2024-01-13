@@ -58,16 +58,20 @@
           v-if="currentCountry"
           class="w-full pb-5 text-xl font-black text-center md:text-5xl"
         >
-          {{ currentCountry.name }} {{ currentCountry.currency }}
+          {{ currentCountry.name }}
+					 <button v-on:click="help" class="text-sm">
+						<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 256 256"><path fill="currentColor" d="M140 180a12 12 0 1 1-12-12a12 12 0 0 1 12 12M128 72c-22.06 0-40 16.15-40 36v4a8 8 0 0 0 16 0v-4c0-11 10.77-20 24-20s24 9 24 20s-10.77 20-24 20a8 8 0 0 0-8 8v8a8 8 0 0 0 16 0v-.72c18.24-3.35 32-17.9 32-35.28c0-19.85-17.94-36-40-36m104 56A104 104 0 1 1 128 24a104.11 104.11 0 0 1 104 104m-16 0a88 88 0 1 0-88 88a88.1 88.1 0 0 0 88-88"/></svg>
+					 </button>
         </div>
         <div
-          v-if="currencyMap && currencyMap.length"
+          v-if="currencyMap && currencyMap.length && !loadingCurrencyInfo"
           class="grid w-full max-w-6xl grid-cols-6 gap-2 mx-auto md:grid-cols-8"
         >
           <button
             v-for="item in currencyMap"
             v-bind:key="item"
-            class="p-1 text-xl font-bold text-center uppercase md:p-2 md:text-3xl hover:bg-gray-200"
+						v-bind:disabled="showToast"
+            class="p-1 text-xl font-bold text-center uppercase md:p-2 md:text-3xl hover:bg-gray-200 disabled:opacity-40 disabled:cursor-not-allowed"
             v-on:click="check(item)"
           >
             {{ item }}
@@ -95,7 +99,7 @@
 import { useCountries } from '../composables/useCountries'
 import useToast from '../composables/useToast'
 
-const { toastMessage, showToastMessage, toastTitle, toastType, showToast } =
+const { toastMessage, showToastMessage, toastTitle, toastType, showToast, toastTimeout } =
   useToast()
 const {
   getContinents,
@@ -108,30 +112,64 @@ const {
   currentCurrencyName,
   currentCurrencyCountries,
   loadingCurrencyInfo,
+	tries,
+	maxTries
 } = useCountries()
 const { loading, currentContinent } = getContinents()
 
+function help() {
+	toastTitle.value = 'Help'
+	toastMessage.value =
+		'Worlwide three-letter format currencies. The first two letters of the code are usually the country code (e.g., "US" for United States, "AU" for Australia). GUESS THE CURRENCY CODE.	Country will reset after 3 wrong answers. Max tries will increase after 3 incorrect answers.'
+	toastType.value = 'info'
+	showToastMessage(9000)
+}
+
 async function check(selectedCurrency: string) {
   await getCurrencyInfo(selectedCurrency)
+	const isCorrectCurrency = currentCountry.value?.currencies.includes(selectedCurrency);
+	tries.value += 1
 
   let answer = 'FALSE! '
 
-  if (selectedCurrency === currentCountry.value?.currency) {
-    answer = 'CORRECT! '
+  if (isCorrectCurrency) {
+    answer = 'TRUE! '
     toastType.value = 'success'
-
+	
     setTimeout(() => {
       showToast.value = false
+			maxTries.value = 3
+			tries.value = 0
       softReset()
-    }, 9000)
-  } else {
-    toastType.value = 'error'
-  }
+    }, toastTimeout.value)
+		
+	} else {	
+		toastType.value = 'error'
+	}
 
-  toastTitle.value = `${answer} ${selectedCurrency}: ${currentCurrencyName.value}`
-  toastMessage.value = `Used in: ${currentCurrencyCountries.value}`
+	
+	if (tries.value === maxTries.value) {
+		toastType.value = 'warning'
+		answer = `FALSE! ${currentCountry.value?.name}`
+		toastTitle.value = `${answer} ${currentCountry.value?.emoji}: ${currentCountry.value?.currency}`
+		toastMessage.value = `TOO MANY TRIES!.  ${tries.value} of ${maxTries.value} tries.`
 
-  showToastMessage()
+		showToastMessage(toastTimeout.value+1000)
+		setTimeout(() => {
+			tries.value = 0
+			maxTries.value = maxTries.value < 5 ? maxTries.value + 1 : maxTries.value
+			softReset()
+		}, toastMessage.value.length)
+		
+	} else {
+		toastTitle.value = `${answer} ${selectedCurrency}: ${currentCurrencyName.value}`
+  	toastMessage.value = `Used in: ${currentCurrencyCountries.value}.  ${tries.value} of ${maxTries.value} tries.`
+		showToastMessage(toastTimeout.value)
+	}
+
+
+
+  
 }
 </script>
 
