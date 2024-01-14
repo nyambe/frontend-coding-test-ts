@@ -1,5 +1,5 @@
-import { describe, it, expect, vi } from 'vitest'
-import useToast from '../../composables/useToast'
+import { describe, it, expect } from 'vitest'
+import useToast from '../composables/useToast'
 
 
 describe('useToast', () => {
@@ -13,20 +13,24 @@ describe('useToast', () => {
   })
 
   it('showToastMessage changes showToast state', async () => {
-    const { showToast, showToastMessage, toastStyles} = useToast()
-	
-    showToastMessage(100) 
+    const { showToast, showToastMessage, toastStyles } = useToast()
+
+    showToastMessage(100)
     expect(showToast.value).toBe(true)
-    await new Promise(resolve => setTimeout(resolve, 200)) 
+    await new Promise<void>(resolve => {
+      setTimeout(() => {
+        resolve(); // resolve without returning any value
+      }, 200);
+    });
     expect(showToast.value).toBe(false)
   })
-	
+
 
   it('toastClass computed property', () => {
     const { toastType, toastClass, toastStyles } = useToast()
     expect(toastClass.value).toEqual(['px-4 py-3 border-t-4 rounded-b shadow-md', ''])
     toastType.value = 'success'
-		console.log(toastStyles[toastType.value])
-		expect(toastStyles[toastType.value]).toContain('bg-green-100 border-green-400 text-green-700')
+    console.log(toastStyles[toastType.value])
+    expect(toastStyles[toastType.value]).toContain('bg-green-100 border-green-400 text-green-700')
   })
 })

@@ -45,7 +45,7 @@ module.exports = {
     'import/no-extraneous-dependencies': [
       'error',
       {
-        devDependencies: ['tailwind.config.js', 'vite.config.ts'],
+        devDependencies: ['tailwind.config.js', 'vite.config.ts','**/*.test.ts'],
       },
     ],
 

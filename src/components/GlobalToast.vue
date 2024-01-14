@@ -27,7 +27,7 @@
 </template>
 
 <script setup lang="ts">
-import useToast from '../../composables/useToast'
+import useToast from '../composables/useToast'
 
 const { showToast, toastMessage, toastTitle, toastClass } = useToast()
 </script>

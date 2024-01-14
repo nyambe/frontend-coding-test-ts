@@ -1,10 +1,7 @@
 import { describe, it, expect } from 'vitest'
-import { gql } from '@apollo/client/core'
 import { createMockClient } from 'mock-apollo-client'
 import { provideApolloClient, useQuery } from '@vue/apollo-composable'
-import { useCountries, GET_CONTINENTS } from '../../composables/useCountries'
-
-
+import { useCountries, GET_CONTINENTS } from '../composables/useCountries'
 
 describe('useCountries', () => {
 	it('initial state', () => {
@@ -13,6 +10,7 @@ describe('useCountries', () => {
 			currentContinent,
 			currentCountry,
 			currencyMap,
+			currentCurrencyCountries,
 			showContinentName
 		} = useCountries();
 
@@ -20,6 +18,7 @@ describe('useCountries', () => {
 		expect(currentContinent.value).toBeUndefined();
 		expect(currentCountry.value).toBeUndefined();
 		expect(currencyMap.value).toBeUndefined();
+		expect(currentCurrencyCountries.value).toBeUndefined();
 		expect(showContinentName.value).toBe(true);
 	});
 
@@ -73,5 +72,21 @@ describe('useCountries', () => {
 		expect(loading.value).toBe(false);
 		expect(error.value).toBeNull();
 
+	});
+
+	it('Fetch USD currency info', async () => {
+		const { getCurrencyInfo, loadingCurrencyInfo, currentCurrencyName, currentCurrencyCountries } = useCountries();
+		await getCurrencyInfo('USD');
+		expect(currentCurrencyName.value).toBe('United States dollar');
+		expect(loadingCurrencyInfo.value).toBe(false);
+		expect(currentCurrencyCountries.value).toContain('United States');
+	})
+
+	it('Fetch XAF currency info', async () => {
+		const { getCurrencyInfo, loadingCurrencyInfo, currentCurrencyName, currentCurrencyCountries } = useCountries();
+		await getCurrencyInfo('XAF');
+		expect(currentCurrencyName.value).toBe('Central African CFA franc');
+		expect(loadingCurrencyInfo.value).toBe(false);
+		expect(currentCurrencyCountries.value).toContain('Equatorial Guinea');
 	})
 })
