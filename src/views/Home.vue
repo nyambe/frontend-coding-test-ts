@@ -13,7 +13,7 @@
           </router-link>
           <p>
             I used <a class="italic font-bold underline" href="https://countries.trevorblades.com/" target="_blank" rel="noopener noreferrer">trevorblades graphQl country API </a> to get the data for the currency quest. 
-            I used an addition REST to get currency name information
+            I used an addition REST to get currency name information <a href="https://restcountries.com/#endpoints-currency" target="_blank" rel="noopener noreferrer">REST COUNTRIES</a>
           </p>
 
         </div>
@@ -45,8 +45,7 @@
         <h2 class="text-2xl font-bold leading-6">Exercise 3</h2>
         <div class="mt-5">
           <p>
-            Please integrate a testing library in the current app. We're pretty
-            sure that you have some components which needs to be tested.
+            Please integrate a testing library in the current app:: Vitest integrated and tested
           </p>
         </div>
       </section>
