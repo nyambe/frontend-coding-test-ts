@@ -1,0 +1,7 @@
+{
+  "name": "frontend-coding-test-ts",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "custom"
+}

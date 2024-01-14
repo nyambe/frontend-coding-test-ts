@@ -8,7 +8,9 @@
     "preview": "vite preview",
     "lint": "vue-tsc --noEmit && eslint -c .eslintrc.js --ext .js,.ts,.vue src/",
     "lint:fix": "npm run lint -- --fix",
-    "test": "vitest"
+    "test": "vitest",
+    "ionic:build": "npm run build",
+    "ionic:serve": "npm run dev"
   },
   "dependencies": {
     "@apollo/client": "^3.8.9",

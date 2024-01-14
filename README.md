@@ -3,6 +3,10 @@
 Clone this repo, run `npm install` and start the project using `npm run dev`.
 The instructions for completing the task can be found in the site that will launch.
 
+## Challange Notees
+
+Fun little exercise for a coding challenge. I used a graphQL and REST API.  Vitest for component testing. Go to /currency-quest to see the exercise.  Home page has direct links also.   Note:: `Vitest 1.0 requires Vite >=v5.0.0 and Node >=v18.0`
+
 ## Additional Hints
 
 ### Recommended IDE Setup
