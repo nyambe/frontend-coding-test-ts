@@ -69,7 +69,7 @@ const apolloClient = new ApolloClient({
 
 provideApolloClient(apolloClient)
 
-const GET_CONTINENTS = gql`
+export const GET_CONTINENTS = gql`
   query GetContinents {
     continents(filter: { code: { ne: "AN" }}) {
       code
@@ -114,10 +114,6 @@ const countriesCurrencyInfo = ref<CountryInfo[]>()
 const currentCurrencyName = ref<string>()
 const currentCurrencyCountries = ref<string>()
 const loadingCurrencyInfo = ref(false)
-
-function setRandomNumber(length: number) {
-	return Math.floor(Math.random() * length)
-}
 
 function setShowContentinent() {
 	showContinentName.value = true
@@ -238,7 +234,6 @@ export function useCountries() {
 		tries,
 		getContinents,
 		setShowContentinent,
-		setRandomNumber,
 		getCountries,
 		softReset,
 		getCurrencyInfo,
