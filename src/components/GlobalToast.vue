@@ -15,9 +15,12 @@
                 />
               </svg>
             </div>
-            <div>
+            <div class="flex-1">
               <p class="font-bold">{{ toastTitle }}</p>
               <p class="pb-4 text-sm">{{ toastMessage }}</p>
+            </div>
+            <div class="flex items-start justify-center w-5 text-xl font-black">
+              ×
             </div>
           </div>
         </div>

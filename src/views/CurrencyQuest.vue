@@ -64,7 +64,7 @@
 					 </button>
         </div>
         <div
-          v-if="currencyMap && currencyMap.length && !loadingCurrencyInfo"
+          v-if="currencyMap && currencyMap.length"
           class="grid w-full max-w-6xl grid-cols-6 gap-2 mx-auto md:grid-cols-8"
         >
           <button
